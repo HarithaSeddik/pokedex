@@ -4,6 +4,7 @@ import axios from 'axios'
 import PokemonList from './components/PokemonList';
 import Pagination from './components/Pagination';
 import { PokemonProvider } from './components/PokemonContext';
+
 function App() {
   const [allPokemon, setAllPokemon] = useState([]) //initialize array to store pokemon
   const [currentPageUrl, setCurrentPageUrl ] = useState("https://pokeapi.co/api/v2/pokemon?limit=20") //Start with initial page
@@ -11,7 +12,7 @@ function App() {
   const [prevPageUrl, setPrevPageUrl] = useState()
   const [loading, setLoading] = useState(true) //display something while loading pokemon from API
 
-  
+  //Useffect for loading the data from API
   useEffect( ()=>{
     setLoading(true) 
     let cancel 
@@ -26,22 +27,21 @@ function App() {
       return data
       // const data = results.json()
     })
+    //Chain another .then() to use the data from the last response
     .then( res => {
-      setAllPokemon([])
+      setAllPokemon([]) // delete old page info
         res.results.forEach(  pokemon => {
-          axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`)
+          axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`) //get information for each pokemon
           .then( res => {
             const data = res.data
-            setAllPokemon( currentList => [...currentList, data])
-            // setAllPokemon( res.data.results.map(p => p.name))
-            
-            // allPokemon.sort((a, b) => a.id - b.id)
+            setAllPokemon( currentList => [...currentList, data]) //store in allPokemon array
+            // allPokemon.sort((a, b) => a.id - b.id) //OPTIONAL SORTING (would slow down program)
             
           })
         })
     }) 
     return () => cancel()
-  }, [currentPageUrl])
+  }, [currentPageUrl]) //call useEffect upon pageUrl change
 
   function goToNextPage() {
     setCurrentPageUrl(nextPageUrl)
@@ -49,17 +49,21 @@ function App() {
   function goToPrevPage() {
     setCurrentPageUrl(prevPageUrl)
   }
-  {if (loading) return 'LOADING...'}
+  {if (loading) return 'LOADING...'} //to see loading 
   return (
-    <PokemonProvider>
+    //add a context provider to communicate states between component
+    <PokemonProvider> 
     <div className="app-container">
       <h1>Pokedex</h1>  
+      {/* Pass down functions go children */}
        <Pagination 
           goToNextPage={nextPageUrl? goToNextPage: null} 
           goToPrevPage={prevPageUrl? goToPrevPage: null}/>  
+
       <div className="pokemon-container">
-        {console.log(prevPageUrl)}
-        <PokemonList pokemon={allPokemon}/> 
+        {/* Call the PokemonList component */}
+        <PokemonList pokemon={allPokemon}/>  
+
           <Pagination 
           goToNextPage={nextPageUrl? goToNextPage: null} 
           goToPrevPage={prevPageUrl? goToPrevPage: null}/>

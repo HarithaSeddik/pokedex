@@ -5,7 +5,9 @@ const PokemonList = ({pokemon}) => {
     return (
         <div className='all-container'>
              {pokemon.map( (pokemonStats, index) => 
+             //Generate all PokemonCard components in a list
             <PokemonCard
+            // Retrieve desired information, as documented in the API 
               key={index}
               pokemonStats = {pokemonStats}
               id={pokemonStats.id}

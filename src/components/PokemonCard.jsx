@@ -14,6 +14,7 @@ const PokemonCard = ({
 }) => {
   const style = type + " thumb-container";
   useContext(PokemonContext)
+
   return (
     <div className={style}>
       <div className="number">
@@ -23,7 +24,6 @@ const PokemonCard = ({
       <div className="detail-wrapper">
         <h3>{name}</h3>
         <small>Type: {type}</small>
-
         <div className="Card__data Card__data--weight">
           <p className="title">
             Weight : {weight}  <br/><br/>
